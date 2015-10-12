@@ -1,3 +1,8 @@
-%p No restaurants yet
+- if @restaurants.any?
+  - @restaurants.each do |restaurant|
+    %h2= restaurant.name
+- else
+  %h1 No restaurants yet!
+
 %p
-  %a(href="") Add a restaurant
+  %a(href='') Add a restaurant
