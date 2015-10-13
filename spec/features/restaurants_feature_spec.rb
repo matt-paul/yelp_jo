@@ -35,8 +35,8 @@ feature 'restaurants' do
         click_link 'Add a restaurant'
         fill_in 'Name', with: 'kf'
         click_button 'Create Restaurant'
-        expect(page).to have_content 'error - name too short'
         expect(page).not_to have_content 'kf'
+        expect(page).to have_content 'Name is too short (minimum is 3 characters)'
       end
     end
   end
