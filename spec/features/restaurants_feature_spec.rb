@@ -13,8 +13,10 @@ feature 'restaurants' do
   end
 
   context 'restaurants have been added' do
-    before { Restaurant.create(name: 'KFC') }
     scenario 'display restaurants' do
+      user = create(:user)
+      sign_in(user)
+      user.restaurants.create(name: 'KFC')
       visit '/restaurants'
       expect(page).to have_content('KFC')
       expect(page).not_to have_content('No restaurants yet')
@@ -38,6 +40,7 @@ feature 'restaurants' do
       click_button 'Create Restaurant'
       expect(page).to have_content 'KFC'
       expect(current_path).to eq '/restaurants'
+      expect(user.restaurants.first.name).to eq 'KFC'
     end
 
     scenario 'does not allow you to submit a name that is too short' do
@@ -53,24 +56,25 @@ feature 'restaurants' do
   end
 
   context 'viewing restaurants' do
-
-    let!(:kfc) { Restaurant.create(name: 'KFC') }
-
     scenario 'lets a user view a restaurant' do
+      user = create(:user)
+      sign_in(user)
+      user.restaurants.create(name: 'KFC')
+      kfc = user.restaurants.first
       visit '/restaurants'
       click_link 'KFC'
       expect(page).to have_content 'KFC'
       expect(current_path).to eq "/restaurants/#{kfc.id}"
     end
-
   end
 
   context 'editing restaurants' do
-    before { Restaurant.create name: 'KFC' }
-    scenario 'let a user edit a restaurant' do
-     visit '/restaurants'
+    scenario "restaurant creator can edit the restaurant" do
      user = create(:user)
      sign_in(user)
+     click_link 'Add a restaurant'
+     fill_in 'Name', with: 'KFC'
+     click_button 'Create Restaurant'
      click_link 'Edit KFC'
      fill_in 'Name', with: 'Kentucky Fried Chicken'
      click_button 'Update Restaurant'
@@ -78,20 +82,44 @@ feature 'restaurants' do
      expect(current_path).to eq '/restaurants'
     end
 
-  end
-
-  context 'deleting restaurants' do
-    before { Restaurant.create name: 'KFC' }
-    scenario 'let a user delete a restaurant' do
-     visit '/restaurants'
-     user = create(:user)
-     sign_in(user)
-     click_link 'Delete KFC'
-     expect(page).not_to have_content 'KFC'
-     expect(page).to have_content 'Restaurant deleted successfully'
+    scenario "non restaurant creator can't edit the restaurant" do
+      user = create(:user)
+      sign_in(user)
+      click_link 'Add a restaurant'
+      fill_in 'Name', with: 'KFC'
+      click_button 'Create Restaurant'
+      click_link 'Sign out'
+      user2 = User.create(email: 'benny@example.com', password: '12344321', password_confirmation: '12344321')
+      sign_in(user2)
+      visit '/restaurants'
+      expect(page).not_to have_content('Edit KFC')
     end
   end
 
+  context 'deleting restaurants' do
+    scenario 'restaurant creator can delete the restaurant' do
+      user = create(:user)
+      sign_in(user)
+      click_link 'Add a restaurant'
+      fill_in 'Name', with: 'KFC'
+      click_button 'Create Restaurant'
+      click_link 'Delete KFC'
+      expect(page).not_to have_content 'KFC'
+      expect(page).to have_content 'Restaurant deleted successfully'
+    end
 
+    scenario 'non restaurant creator cannot delete the restaurant' do
+      user = create(:user)
+      sign_in(user)
+      click_link 'Add a restaurant'
+      fill_in 'Name', with: 'KFC'
+      click_button 'Create Restaurant'
+      click_link 'Sign out'
+      user2 = User.create(email: 'benny@example.com', password: '12344321', password_confirmation: '12344321')
+      sign_in(user2)
+      visit '/restaurants'
+      expect(page).not_to have_content 'Delete KFC'
+    end
+  end
 
 end
