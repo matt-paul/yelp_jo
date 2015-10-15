@@ -22,4 +22,7 @@
   %h1 No restaurants yet!
 
 %p
-  = link_to "Add a restaurant", new_restaurant_path
+  - if user_signed_in?
+    = link_to "Add a restaurant", new_restaurant_path
+  - else
+    %p Please sign in to add a restaurant

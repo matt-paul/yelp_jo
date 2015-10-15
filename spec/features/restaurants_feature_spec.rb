@@ -5,6 +5,8 @@ feature 'restaurants' do
   context 'no restaurants have been added' do
     scenario 'should display a prompt to add a restaurant' do
       visit '/restaurants'
+      user = create(:user)
+      sign_in(user)
       expect(page).to have_content 'No restaurants yet'
       expect(page).to have_link 'Add a restaurant'
     end
@@ -20,8 +22,17 @@ feature 'restaurants' do
   end
 
   context 'creating restaurants' do
+
+    scenario 'does not allow restaurant to be created if not logged in' do
+      visit '/restaurants'
+      expect(page).not_to have_content 'Add a restaurant'
+      expect(page).to have_content "Please sign in to add a restaurant"
+    end
+
     scenario 'prompts user to fill out a form, then displays the new restaurant' do
       visit '/restaurants'
+      user = create(:user)
+      sign_in(user)
       click_link 'Add a restaurant'
       fill_in 'Name', with: 'KFC'
       click_button 'Create Restaurant'
@@ -29,15 +40,15 @@ feature 'restaurants' do
       expect(current_path).to eq '/restaurants'
     end
 
-    context 'an invalid restaurant' do
-      it 'does not allow you to submit a name that is too short' do
-        visit '/restaurants'
-        click_link 'Add a restaurant'
-        fill_in 'Name', with: 'kf'
-        click_button 'Create Restaurant'
-        expect(page).not_to have_content 'kf'
-        expect(page).to have_content 'Name is too short (minimum is 3 characters)'
-      end
+    scenario 'does not allow you to submit a name that is too short' do
+      visit '/restaurants'
+      user = create(:user)
+      sign_in(user)
+      click_link 'Add a restaurant'
+      fill_in 'Name', with: 'kf'
+      click_button 'Create Restaurant'
+      expect(page).not_to have_content 'kf'
+      expect(page).to have_content 'Name is too short (minimum is 3 characters)'
     end
   end
 
