@@ -3,6 +3,12 @@ require 'rails_helper'
 feature 'restaurants' do
 
   context 'no restaurants have been added' do
+    scenario 'should not display a prompt to add a restaurant when not logged in' do
+      visit '/restaurants'
+      expect(page).to have_content 'No restaurants yet'
+      expect(page).not_to have_link 'Add a restaurant'
+    end
+
     scenario 'should display a prompt to add a restaurant' do
       visit '/restaurants'
       user = create(:user)
@@ -24,7 +30,6 @@ feature 'restaurants' do
   end
 
   context 'creating restaurants' do
-
     scenario 'does not allow restaurant to be created if not logged in' do
       visit '/restaurants'
       expect(page).not_to have_content 'Add a restaurant'
@@ -62,6 +67,7 @@ feature 'restaurants' do
       user.restaurants.create(name: 'KFC')
       kfc = user.restaurants.first
       visit '/restaurants'
+      click_link 'Sign out'
       click_link 'KFC'
       expect(page).to have_content 'KFC'
       expect(current_path).to eq "/restaurants/#{kfc.id}"
