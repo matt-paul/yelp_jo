@@ -11,6 +11,9 @@
               = time_ago_in_words(review.created_at)
               %strong= review.rating
               \/5
+              - if review.user == current_user
+                %p
+                  = link_to "Delete review", restaurant_review_path(restaurant,review), method: :delete
       - else
         %ul
           %li
