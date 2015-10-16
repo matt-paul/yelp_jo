@@ -9,7 +9,7 @@ feature 'restaurants' do
       expect(page).not_to have_link 'Add a restaurant'
     end
 
-    scenario 'should display a prompt to add a restaurant' do
+    scenario 'should display a prompt to add a restaurant when logged in' do
       visit '/restaurants'
       user = create(:user)
       sign_in(user)
@@ -45,7 +45,7 @@ feature 'restaurants' do
       click_button 'Create Restaurant'
       expect(page).to have_content 'KFC'
       expect(current_path).to eq '/restaurants'
-      expect(user.restaurants.first.name).to eq 'KFC'
+      expect(user.restaurants[0].name).to eq 'KFC'
     end
 
     scenario 'does not allow you to submit a name that is too short' do
@@ -65,12 +65,13 @@ feature 'restaurants' do
       user = create(:user)
       sign_in(user)
       user.restaurants.create(name: 'KFC')
-      kfc = user.restaurants.first
+      user.restaurants.create(name: 'Mcdonalds')
+      mac = user.restaurants[1]
       visit '/restaurants'
       click_link 'Sign out'
-      click_link 'KFC'
-      expect(page).to have_content 'KFC'
-      expect(current_path).to eq "/restaurants/#{kfc.id}"
+      click_link 'Mcdonalds'
+      expect(page).to have_content 'Mcdonalds'
+      expect(current_path).to eq "/restaurants/#{mac.id}"
     end
   end
 
@@ -81,6 +82,13 @@ feature 'restaurants' do
      click_link 'Add a restaurant'
      fill_in 'Name', with: 'KFC'
      click_button 'Create Restaurant'
+
+    #  user.restaurants.create(name: 'KFC')
+
+    # rest1 = Restaurant.new(name: 'KFC')
+    # rest1.user_id = user.id
+    # rest1.save
+     visit "/restaurants"
      click_link 'Edit KFC'
      fill_in 'Name', with: 'Kentucky Fried Chicken'
      click_button 'Update Restaurant'

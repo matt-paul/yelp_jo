@@ -15,3 +15,5 @@ class Restaurant < ActiveRecord::Base
   end
 
 end
+
+# restaurant.user_review_on_restaurant(user)

@@ -43,10 +43,6 @@ feature 'reviews' do
       click_link 'Add a restaurant'
       fill_in 'Name', with: 'KFC'
       click_button 'Create Restaurant'
-      click_link 'Sign out'
-      user2 = User.create(email: 'benny@example.com', password: '12344321', password_confirmation: '12344321')
-      sign_in(user2)
-      visit '/restaurants'
       click_link 'Review KFC'
       fill_in "Thoughts", with: "unhealthy"
       select '3', from: 'Rating'
@@ -85,23 +81,6 @@ feature 'reviews' do
       visit '/restaurants'
       expect(page).not_to have_content('Delete review')
     end
-    # scenario 'User has access to review link to create review for a restaurant' do
-    #   user = create(:user)
-    #   sign_in(user)
-    #   click_link 'Add a restaurant'
-    #   fill_in 'Name', with: 'KFC'
-    #   click_button 'Create Restaurant'
-    #   click_link 'Sign out'
-    #   user2 = User.create(email: 'benny@example.com', password: '12344321', password_confirmation: '12344321')
-    #   sign_in(user2)
-    #   visit '/restaurants'
-    #   expect(page).to have_content 'Review KFC'
-    #   fill_in "Thoughts", with: "unhealthy"
-    #   select '3', from: 'Rating'
-    #   click_button 'Leave Review'
-    #   expect(current_path).to eq('/restaurants')
-    #   expect(page).to have_content('unhealthy')
-    # end
 
   end
 

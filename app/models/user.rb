@@ -7,17 +7,25 @@ class User < ActiveRecord::Base
 
   has_many :restaurants
   has_many :reviews
+
   # def restaurants
   #     rests = Restaurant.all
   #     result = []
   #     rests.each do |restaurant|
-  #       if self.id == restaurant.id
+  #       if self.id == restaurant.user_id
   #         result << restaurant
   #       end
   #     end
   #     result
   # end
-
+  # def reviews_on(restaurant)
+  #   user.reviews.each do |review|
+  #     return review if review.restaurant_id == restaurant.id
+  #   end
+  #     return nil
+  # end
+  #
+  # user.reviews_on(restaurant)
 
    def self.from_omniauth(auth)
      where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
