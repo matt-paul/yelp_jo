@@ -10,6 +10,8 @@ require 'capybara/rails'
 require 'factory_girl_rails'
 # require './spec/factories/user'
 require './app/helpers/user_helper'
+
+require './app/helpers/reviews_helper'
 # Add additional requires below this line. Rails is not loaded until this point!
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
@@ -38,6 +40,7 @@ RSpec.configure do |config|
 
   config.include FactoryGirl::Syntax::Methods
   config.include UserHelper
+  config.include ReviewsHelper
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
