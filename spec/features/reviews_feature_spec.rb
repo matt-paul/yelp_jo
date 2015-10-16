@@ -37,6 +37,23 @@ feature 'reviews' do
       expect(page).to have_content('unhealthy')
     end
 
+    scenario 'A user can only review a restaurant once' do
+      user = create(:user)
+      sign_in(user)
+      click_link 'Add a restaurant'
+      fill_in 'Name', with: 'KFC'
+      click_button 'Create Restaurant'
+      click_link 'Sign out'
+      user2 = User.create(email: 'benny@example.com', password: '12344321', password_confirmation: '12344321')
+      sign_in(user2)
+      visit '/restaurants'
+      click_link 'Review KFC'
+      fill_in "Thoughts", with: "unhealthy"
+      select '3', from: 'Rating'
+      click_button 'Leave review'
+      expect(page).not_to have_content('Review KFC')
+    end
+
     scenario 'User who created the review can delete it' do
       user = create(:user)
       sign_in(user)

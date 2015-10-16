@@ -22,8 +22,9 @@
       %p
         = link_to "Edit #{restaurant.name}", edit_restaurant_path(restaurant)
         = link_to "Delete #{restaurant.name}", restaurant_path(restaurant), method: :delete
-    %p
-      = link_to "Review #{restaurant.name}", new_restaurant_review_path(restaurant)
+    - if current_user != nil && restaurant.user_review_on_restaurant(current_user) == nil
+      %p
+        = link_to "Review #{restaurant.name}", new_restaurant_review_path(restaurant)
 - else
   %h1 No restaurants yet!
 
